@@ -73,6 +73,7 @@ class Angelleye_PayPal_Express_Checkout_Helper {
                 $this->api_signature = !empty($this->setting['api_signature']) ? $this->setting['api_signature'] : '';
             }
             $this->angelleye_skip_text = !empty($this->setting['angelleye_skip_text']) ? $this->setting['angelleye_skip_text'] : 'Skip the forms and pay faster with PayPal!';
+            $this->angelleye_text_show_on_cart = !empty($this->setting['angelleye_text_show_on_cart']) ? $this->setting['angelleye_text_show_on_cart'] : '';
             add_action('woocommerce_after_add_to_cart_button', array($this, 'buy_now_button'), 10);
             if ($this->save_abandoned_checkout == false) {
                 if (version_compare(WC_VERSION, '3.0', '<')) {
@@ -545,6 +546,9 @@ class Angelleye_PayPal_Express_Checkout_Helper {
                 echo $cart_button_html;
             }
             do_action('angelleye_ec_after_buttom_cart_button', $this);
+            if ($this->angelleye_text_show_on_cart == 'yes') {
+                echo $this->angelleye_skip_text;
+            }
         }
     }
 

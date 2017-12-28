@@ -70,6 +70,7 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
         $this->customer_service_number = $this->get_option('customer_service_number', '');
         $this->use_wp_locale_code = $this->get_option('use_wp_locale_code', 'yes');
         $this->angelleye_skip_text = $this->get_option('angelleye_skip_text', 'Skip the forms and pay faster with PayPal!');
+        $this->angelleye_text_show_on_cart = $this->get_option('angelleye_text_show_on_cart',''); 
         $this->skip_final_review = $this->get_option('skip_final_review', 'no');
         $this->disable_term = $this->get_option('disable_term', 'no');
         $this->payment_action = $this->get_option('payment_action', 'Sale');
@@ -624,6 +625,13 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
                 'type' => 'text',
                 'description' => __('This message will be displayed next to the PayPal Express Checkout button at the top of the checkout page.'),
                 'default' => __('Skip the forms and pay faster with PayPal!', 'paypal-for-woocommerce'),
+                'desc_tip' => true,
+            ),
+            'angelleye_text_show_on_cart' => array(
+                'title' => __('Show Express Checkout Message on Cart Page', 'paypal-for-woocommerce'),
+                'type' => 'checkbox',
+                'default' => 'no',
+                'description' => __('This message will be displayed next to the PayPal Express Checkout button at the cart page.'),                
                 'desc_tip' => true,
             ),
             'skip_final_review' => array(
