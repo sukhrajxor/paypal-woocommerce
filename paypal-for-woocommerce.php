@@ -265,8 +265,9 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
             $this->angelleye_paypal_plus_notice($user_id);
              
             $opt_in_log = get_option( 'agree_disgree_opt_in_logging');
-            $hide_notice = get_user_meta($user_id,'agree_disgree_opt_in_logging',true);
-            if($opt_in_log != 'true' && $hide_notice != ' false'){
+            $hide_notice = get_user_meta($user_id,'agree_disgree_opt_in_logging',true); 
+            
+            if($opt_in_log != 'true' && $hide_notice != 'false'){
                 echo '<div class="notice notice-info"><p>'.sprintf(__('Please help us improve the plugin by tracking limited details about the use of this plugin on your site.','paypal-for-woocommerce')).
                     '<br><br><a href="'.  add_query_arg('agree_opt_in_logging','true').'" class="button button-primary">'.__('Agree','paypal-for-woocommerce').'</a>&nbsp;&nbsp;'
                     .'<a href="'.  add_query_arg('disgree_opt_in_logging','true').'" class="button">'.__('Disagree','paypal-for-woocommerce').'</a></p></div>';
@@ -285,7 +286,7 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
             }
             if(isset($_GET['disgree_opt_in_logging']) && $_GET['disgree_opt_in_logging']=='true'){
                 update_option('agree_disgree_opt_in_logging','false');
-                add_user_meta($user_id, 'agree_disgree_opt_in_logging', 'false');                
+                update_user_meta($user_id, 'agree_disgree_opt_in_logging', 'false');                
                 $set_ignore_tag_url =  remove_query_arg( 'disgree_opt_in_logging' );
                 wp_redirect($set_ignore_tag_url);
             }
