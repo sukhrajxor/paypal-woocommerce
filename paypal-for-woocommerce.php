@@ -268,7 +268,7 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
             $hide_notice = get_user_meta($user_id,'agree_disgree_opt_in_logging',true); 
             
             if($opt_in_log != 'true' && $hide_notice != 'false'){
-                echo '<div class="notice notice-info"><p>'.sprintf(__('Please help us improve the plugin by tracking limited details about the use of this plugin on your site.','paypal-for-woocommerce')).
+                echo '<div class="notice notice-info"><h3>PayPal for WooCommerce</h3><p>'.sprintf(__('Please help us improve the plugin by tracking limited details about the use of this plugin on your site.','paypal-for-woocommerce')).
                     '<br><br><a href="'.  add_query_arg('agree_opt_in_logging','true').'" class="button button-primary">'.__('Agree','paypal-for-woocommerce').'</a>&nbsp;&nbsp;'
                     .'<a href="'.  add_query_arg('disgree_opt_in_logging','true').'" class="button">'.__('Disagree','paypal-for-woocommerce').'</a></p></div>';
             }
