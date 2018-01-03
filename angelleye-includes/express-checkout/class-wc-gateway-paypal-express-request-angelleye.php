@@ -238,6 +238,21 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
                 $this->angelleye_ec_sellerprotection_handler($this->confirm_order_id);
                 $this->angelleye_ec_save_billing_agreement($order_id);
                 update_post_meta($order_id, 'is_sandbox', $this->testmode);
+                
+                $GTDFields = array(
+                    'transactionid' => isset($this->paypal_response['PAYMENTINFO_0_TRANSACTIONID']) ? $this->paypal_response['PAYMENTINFO_0_TRANSACTIONID'] : ''
+                );
+                $PayPalRequestData = array('GTDFields'=>$GTDFields);                
+                $PayPalResult_GTD = $this->paypal->GetTransactionDetails($PayPalRequestData);
+                if($this->paypal->APICallSuccessful($PayPalResult_GTD['ACK'])){                    
+                    update_post_meta($order_id, 'paypal_sales_tax', $PayPalResult_GTD['SALESTAX']);
+                    update_post_meta($order_id, 'paypal_insurance_amount', $PayPalResult_GTD['INSURANCEAMOUNT']);
+                    update_post_meta($order_id, 'paypal_gift_receipt', $PayPalResult_GTD['GIFTRECEIPT']);
+                    update_post_meta($order_id, 'paypal_fee_amount', $PayPalResult_GTD['FEEAMT']);
+                    update_post_meta($order_id, 'paypal_tax_amount', $PayPalResult_GTD['TAXAMT']);
+                    update_post_meta($order_id, 'paypal_shipping_amount', $PayPalResult_GTD['SHIPPINGAMT']);
+                    update_post_meta($order_id, 'paypal_handling_amount', $PayPalResult_GTD['HANDLINGAMT']);                    
+                }            
                 if (empty($this->paypal_response['PAYMENTINFO_0_PAYMENTSTATUS'])) {
                     $this->paypal_response['PAYMENTINFO_0_PAYMENTSTATUS'] = '';
                 }
@@ -309,7 +324,7 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
                 } else {
                     update_post_meta($order->get_id(), '_express_chekout_transactionid', isset($this->paypal_response['PAYMENTINFO_0_TRANSACTIONID']) ? $this->paypal_response['PAYMENTINFO_0_TRANSACTIONID'] : '' );
                 }
-
+               
                 $order->add_order_note(sprintf(__('%s payment Transaction ID: %s', 'paypal-for-woocommerce'), $this->gateway->title, $this->paypal_response['PAYMENTINFO_0_TRANSACTIONID']));
                 
                 WC()->cart->empty_cart();
