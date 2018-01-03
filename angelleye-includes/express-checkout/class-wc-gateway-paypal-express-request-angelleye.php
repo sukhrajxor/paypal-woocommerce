@@ -238,7 +238,7 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
                 $this->angelleye_ec_sellerprotection_handler($this->confirm_order_id);
                 $this->angelleye_ec_save_billing_agreement($order_id);
                 update_post_meta($order_id, 'is_sandbox', $this->testmode);
-                
+                /* Adding fees data to order meta custom fields - start */
                 $GTDFields = array(
                     'transactionid' => isset($this->paypal_response['PAYMENTINFO_0_TRANSACTIONID']) ? $this->paypal_response['PAYMENTINFO_0_TRANSACTIONID'] : ''
                 );
@@ -252,7 +252,8 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
                     update_post_meta($order_id, 'paypal_tax_amount', $PayPalResult_GTD['TAXAMT']);
                     update_post_meta($order_id, 'paypal_shipping_amount', $PayPalResult_GTD['SHIPPINGAMT']);
                     update_post_meta($order_id, 'paypal_handling_amount', $PayPalResult_GTD['HANDLINGAMT']);                    
-                }            
+                } 
+                /* Adding fees data to order meta custom fields - end */
                 if (empty($this->paypal_response['PAYMENTINFO_0_PAYMENTSTATUS'])) {
                     $this->paypal_response['PAYMENTINFO_0_PAYMENTSTATUS'] = '';
                 }

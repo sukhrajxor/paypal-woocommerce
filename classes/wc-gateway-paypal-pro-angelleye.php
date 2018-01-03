@@ -1217,7 +1217,28 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
                 );
                 wp_update_post($checkout_note);
             }
+            
+            /* Adding fees data to order meta custom fields - start */
+            $GTDFields = array(
+                'transactionid' => isset($PayPalResult['TRANSACTIONID']) ?$PayPalResult['TRANSACTIONID'] : ''
+            );
+            $PayPalRequestData = array('GTDFields'=>$GTDFields);                
+            $PayPalResult_GTD = $PayPal->GetTransactionDetails($PayPalRequestData);
 
+            $this->log('GTD Request: ' . print_r($PayPal->NVPToArray($PayPal->MaskAPIResult($PayPalResult_GTD['RAWREQUEST'])), true));
+            $this->log('GTD Response: ' . print_r($PayPal->NVPToArray($PayPal->MaskAPIResult($PayPalResult_GTD['RAWRESPONSE'])), true));
+            
+            if($PayPal->APICallSuccessful($PayPalResult_GTD['ACK'])){
+                update_post_meta($order_id, 'paypal_sales_tax', $PayPalResult_GTD['SALESTAX']);
+                update_post_meta($order_id, 'paypal_insurance_amount', $PayPalResult_GTD['INSURANCEAMOUNT']);
+                update_post_meta($order_id, 'paypal_gift_receipt', $PayPalResult_GTD['GIFTRECEIPT']);
+                update_post_meta($order_id, 'paypal_fee_amount', $PayPalResult_GTD['FEEAMT']);
+                update_post_meta($order_id, 'paypal_tax_amount', $PayPalResult_GTD['TAXAMT']);
+                update_post_meta($order_id, 'paypal_shipping_amount', $PayPalResult_GTD['SHIPPINGAMT']);
+                update_post_meta($order_id, 'paypal_handling_amount', $PayPalResult_GTD['HANDLINGAMT']);                    
+            } 
+            /* Adding fees data to order meta custom fields - end */
+                
             /**
              * Add order notes for AVS result
              */
