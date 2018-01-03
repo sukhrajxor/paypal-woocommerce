@@ -704,7 +704,7 @@ class WC_Gateway_Braintree_AngellEYE extends WC_Payment_Gateway_CC {
                 } else {
                     $log['paymentMethodNonce'] = '*********************';
                 }
-                $this->add_log('Braintree_Transaction::sale Reuest Data ' . print_r($log, true));
+                $this->add_log('Braintree_Transaction::sale Request Data ' . print_r($log, true));
             }
 
             try {
@@ -763,12 +763,27 @@ class WC_Gateway_Braintree_AngellEYE extends WC_Payment_Gateway_CC {
             );
 
             if (in_array($this->response->transaction->status, $maybe_settled_later)) {
+                
+                $transaction = Braintree_Transaction::find($this->response->transaction->id);
+                $taxAmount = isset($transaction->taxAmount) ? $transaction->taxAmount : '';
+                $taxExempt = isset($transaction->taxExempt) ? $transaction->taxExempt : '';
+                $shippingAmount = isset($transaction->shippingAmount) ? $transaction->shippingAmount : '';
+                $discountAmount = isset($transaction->discountAmount) ? $transaction->discountAmount : '';                
+                
                 if ($old_wc) {
                     update_post_meta($order_id, 'is_sandbox', $this->sandbox);
+                    update_post_meta($order_id, 'braintree_taxAmount',$taxAmount);
+                    update_post_meta($order_id, 'braintree_taxExempt', $taxExempt);
+                    update_post_meta($order_id, 'braintree_shippingAmount', $shippingAmount);
+                    update_post_meta($order_id, 'braintree_discountAmount',$discountAmount);                    
                 } else {
                     update_post_meta($order->get_id(), 'is_sandbox', $this->sandbox);
+                    update_post_meta($order->get_id(), 'braintree_taxAmount', $taxAmount);
+                    update_post_meta($order->get_id(), 'braintree_taxExempt', $taxExempt);
+                    update_post_meta($order->get_id(), 'braintree_shippingAmount',$shippingAmount);
+                    update_post_meta($order->get_id(), 'braintree_discountAmount', $discountAmount);
                 }
-                $transaction = Braintree_Transaction::find($this->response->transaction->id);
+                
                 $this->save_payment_token($order, $transaction->creditCard['token']);
                 do_action('before_save_payment_token', $order_id);
                 if ($this->supports('tokenization')) {
