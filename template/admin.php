@@ -12,6 +12,7 @@ $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_
     <h2 class="nav-tab-wrapper">
         <a href="?page=<?php echo $this->plugin_slug; ?>&tab=general_settings&gateway=paypal_payment_gateway_products" class="nav-tab <?php echo $active_tab == 'general_settings' ? 'nav-tab-active' : ''; ?>"><?php echo __('General', 'paypal-for-woocommerce'); ?></a>
         <a href="?page=<?php echo $this->plugin_slug; ?>&tab=tools" class="nav-tab <?php echo $active_tab == 'tools' ? 'nav-tab-active' : ''; ?>"><?php echo __('Tools', 'paypal-for-woocommerce'); ?></a>
+        <a href="?page=<?php echo $this->plugin_slug; ?>&tab=ae_notifications" class="nav-tab <?php echo $active_tab == 'ae_notifications' ? 'nav-tab-active' : ''; ?>"><?php echo __('Notifications', 'paypal-for-woocommerce'); ?></a>
     </h2>
     <?php if ($active_tab == 'general_settings') { ?>
         <h2 class="nav-tab-wrapper">
@@ -170,7 +171,8 @@ $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_
             do_action('angelleye_paypal_for_woocommerce_general_settings_tab_content');
         }
         ?>
-    <?php } elseif($_GET['tab'] == 'tools') {
+    <?php } 
+    elseif($_GET['tab'] == 'tools') {
         ?>
         <div class="wrap">
             <div class="angelleye-paypal-for-woocommerce-shipping-tools-wrap">
@@ -273,5 +275,33 @@ $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_
                 </form>
             </div>
         </div>
-    <?php } ?>
+    <?php } 
+    elseif($_GET['tab'] == 'ae_notifications'){
+        
+        $body = array('plugin_slug' => 'paypal-for-woocommerce');
+        $args = array(
+            'body' => json_encode($body),
+            'headers' => array(
+                'Content-Type' => 'application/json; charset=utf-8'
+            )
+        );
+        $response = wp_remote_post( 'http://localhost/ae_notifications/',$args);
+        if ( is_wp_error( $response ) ) {
+            $error_message = $response->get_error_message();
+            echo "Something went wrong: $error_message";
+        }else{   
+            $data = json_decode($response['body']);
+            
+            if( isset($data->success) && $data->success == 'true'){
+                echo "<pre>";
+                var_dump($data->data);
+                exit;
+            }
+            else{
+                _e("No Notifications available","paypal-for-woocommerce");
+            }
+        }
+        
+    }
+    ?>
 </div>
