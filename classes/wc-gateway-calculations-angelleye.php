@@ -96,7 +96,9 @@ if (!class_exists('WC_Gateway_Calculation_AngellEYE')) :
                             $attributes = $product->get_attributes();
                             if (!empty($attributes) && is_array($attributes)) {
                                 foreach ($attributes as $key => $value) {
-                                    $desc .= ' ' . ucwords($key) . ': ' . $value;
+                                    if(is_string($value) && is_string($key)){
+                                        $desc .= ' ' . ucwords($key) . ': ' . $value;
+                                    }
                                 }
                             }
                             $desc = trim($desc);
