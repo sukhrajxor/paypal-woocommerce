@@ -93,7 +93,7 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
         $this->liability_shift = 'yes' === $this->get_option('liability_shift', 'no');
         $this->debug = 'yes' === $this->get_option('debug', 'no');
         $this->payment_action = $this->get_option('payment_action', 'Sale');
-        $this->send_items = 'yes' === $this->get_option('send_items', 'yes');
+        $this->subtotal_mismatch_behavior = $this->get_option('subtotal_mismatch_behavior', 'add');
         $this->enable_notifyurl = $this->get_option('enable_notifyurl', 'no');
         $this->is_encrypt = $this->get_option('is_encrypt', 'no');
         $this->softdescriptor = $this->get_option('softdescriptor', '');
@@ -309,12 +309,17 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
                 'default' => 'On Hold',
                 'desc_tip' => true,
             ),
-            'send_items' => array(
-                'title' => __('Send Item Details', 'paypal-for-woocommerce'),
-                'label' => __('Send line item details to PayPal', 'paypal-for-woocommerce'),
-                'type' => 'checkbox',
-                'description' => __('Include all line item details in the payment request to PayPal so that they can be seen from the PayPal transaction details page.', 'paypal-for-woocommerce'),
-                'default' => 'yes'
+            'subtotal_mismatch_behavior' => array(
+		'title'       => __( 'Subtotal Mismatch Behavior', 'paypal-for-woocommerce' ),
+		'type'        => 'select',
+		'class'       => 'wc-enhanced-select',
+		'description' => __( 'Internally, WC calculates line item prices and taxes out to four decimal places; however, PayPal can only handle amounts out to two decimal places (or, depending on the currency, no decimal places at all). Occasionally, this can cause discrepancies between the way WooCommerce calculates prices versus the way PayPal calculates them. If a mismatch occurs, this option controls how the order is dealt with so payment can still be taken.', 'paypal-for-woocommerce' ),
+		'default'     => 'add',
+		'desc_tip'    => true,
+		'options'     => array(
+			'add'  => __( 'Add another line item', 'paypal-for-woocommerce' ),
+			'drop' => __( 'Do not send line items to PayPal', 'paypal-for-woocommerce' ),
+		),
             ),
             'enable_notifyurl' => array(
                 'title' => __('Enable PayPal IPN', 'paypal-for-woocommerce'),
@@ -1037,7 +1042,7 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
         }
         $PaymentData = $this->calculation_angelleye->order_calculation($order_id);
         $OrderItems = array();
-        if ($this->send_items) {
+        if( $PaymentData['is_calculation_mismatch'] == false ) {
             foreach ($PaymentData['order_items'] as $item) {
                 $Item = array(
                     'l_name' => $item['name'], // Item Name.  127 char max.
@@ -1052,52 +1057,10 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
                 );
                 array_push($OrderItems, $Item);
             }
-        }
-
-        //fix: itemamt = 0, make shipping or tax as order item
-        if ($PaymentData['itemamt'] == 0 && $PaymentData['shippingamt'] > 0) {
-            $OrderItems = array();
-
-            $Item = array(
-                'l_name' => __(apply_filters('angelleye_paypal_pro_shipping_text', 'Shipping'), 'paypal-for-woocommerce'), // Item Name.  127 char max.
-                'l_desc' => '', // Item description.  127 char max.
-                'l_amt' => $PaymentData['shippingamt'], // Cost of individual item.
-                'l_number' => '', // Item Number.  127 char max.
-                'l_qty' => 1, // Item quantity.  Must be any positive integer.
-                'l_taxamt' => '', // Item's sales tax amount.
-                'l_ebayitemnumber' => '', // eBay auction number of item.
-                'l_ebayitemauctiontxnid' => '', // eBay transaction ID of purchased item.
-                'l_ebayitemorderid' => ''                // eBay order ID for the item.
-            );
-            array_push($OrderItems, $Item);
-
-
-            if ($PaymentData['taxamt'] > 0) {
-                $Item = array(
-                    'l_name' => __(apply_filters('angelleye_paypal_pro_tax_text', 'Tax'), 'paypal-for-woocommerce'), // Item Name.  127 char max.
-                    'l_desc' => '', // Item description.  127 char max.
-                    'l_amt' => $PaymentData['taxamt'], // Cost of individual item.
-                    'l_number' => '', // Item Number.  127 char max.
-                    'l_qty' => 1, // Item quantity.  Must be any positive integer.
-                    'l_taxamt' => '', // Item's sales tax amount.
-                    'l_ebayitemnumber' => '', // eBay auction number of item.
-                    'l_ebayitemauctiontxnid' => '', // eBay transaction ID of purchased item.
-                    'l_ebayitemorderid' => ''                // eBay order ID for the item.
-                );
-                array_push($OrderItems, $Item);
-            }
-
-            $PaymentDetails['itemamt'] = AngellEYE_Gateway_Paypal::number_format($order->get_total());
-        } else {
-            /**
-             * Shipping/tax/item amount
-             */
-            if ($this->send_items) {
-                $PaymentDetails['taxamt'] = $PaymentData['taxamt'];
-                $PaymentDetails['shippingamt'] = $PaymentData['shippingamt'];
-                $PaymentDetails['itemamt'] = $PaymentData['itemamt'];
-            }
-        }
+            $PaymentDetails['taxamt'] = $PaymentData['taxamt'];
+            $PaymentDetails['shippingamt'] = $PaymentData['shippingamt'];
+            $PaymentDetails['itemamt'] = AngellEYE_Gateway_Paypal::number_format($PaymentData['itemamt']);
+        } 
 
         /**
          * 3D Secure Params
@@ -1732,7 +1695,7 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
         if (!class_exists('WC_Gateway_Calculation_AngellEYE')) {
             require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/wc-gateway-calculations-angelleye.php' );
         }
-        $this->calculation_angelleye = new WC_Gateway_Calculation_AngellEYE();
+        $this->calculation_angelleye = new WC_Gateway_Calculation_AngellEYE(null, $this->subtotal_mismatch_behavior);
         $DPFields = array(
             'paymentaction' => !empty($this->payment_action) ? $this->payment_action : 'Sale', // How you want to obtain payment.  Authorization indidicates the payment is a basic auth subject to settlement with Auth & Capture.  Sale indicates that this is a final sale for which you are requesting payment.  Default is Sale.
             'ipaddress' => AngellEYE_Utility::get_user_ip(), // Required.  IP address of the payer's browser.
@@ -1797,7 +1760,7 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
         }
         $PaymentData = $this->calculation_angelleye->order_calculation($order_id);
         $OrderItems = array();
-        if ($this->send_items) {
+        if( $PaymentData['is_calculation_mismatch'] == false ) {
             foreach ($PaymentData['order_items'] as $item) {
                 $Item = array(
                     'l_name' => $item['name'], // Item Name.  127 char max.
@@ -1812,40 +1775,10 @@ class WC_Gateway_PayPal_Pro_AngellEYE extends WC_Payment_Gateway_CC {
                 );
                 array_push($OrderItems, $Item);
             }
-        }
-        if ($PaymentData['itemamt'] == 0 && $PaymentData['shippingamt'] > 0) {
-            $OrderItems = array();
-            $Item = array(
-                'l_name' => __(apply_filters('angelleye_paypal_pro_shipping_text', 'Shipping'), 'paypal-for-woocommerce'), // Item Name.  127 char max.
-                'l_desc' => '', // Item description.  127 char max.
-                'l_amt' => $PaymentData['shippingamt'], // Cost of individual item.
-                'l_number' => '', // Item Number.  127 char max.
-                'l_qty' => 1, // Item quantity.  Must be any positive integer.
-                'l_taxamt' => '', // Item's sales tax amount.
-                'l_ebayitemnumber' => '', // eBay auction number of item.
-                'l_ebayitemauctiontxnid' => '', // eBay transaction ID of purchased item.
-                'l_ebayitemorderid' => ''                // eBay order ID for the item.
-            );
-            array_push($OrderItems, $Item);
-            if ($PaymentData['taxamt'] > 0) {
-                $Item = array(
-                    'l_name' => __(apply_filters('angelleye_paypal_pro_tax_text', 'Tax'), 'paypal-for-woocommerce'), // Item Name.  127 char max.
-                    'l_desc' => '', // Item description.  127 char max.
-                    'l_amt' => $PaymentData['taxamt'], // Cost of individual item.
-                    'l_number' => '', // Item Number.  127 char max.
-                    'l_qty' => 1, // Item quantity.  Must be any positive integer.
-                    'l_taxamt' => '', // Item's sales tax amount.
-                    'l_ebayitemnumber' => '', // eBay auction number of item.
-                    'l_ebayitemauctiontxnid' => '', // eBay transaction ID of purchased item.
-                    'l_ebayitemorderid' => ''                // eBay order ID for the item.
-                );
-                array_push($OrderItems, $Item);
-            }
-            $PaymentDetails['itemamt'] = AngellEYE_Gateway_Paypal::number_format($order->get_total());
         } else {
             $PaymentDetails['taxamt'] = $PaymentData['taxamt'];
             $PaymentDetails['shippingamt'] = $PaymentData['shippingamt'];
-            $PaymentDetails['itemamt'] = $PaymentData['itemamt'];
+            $PaymentDetails['itemamt'] = AngellEYE_Gateway_Paypal::number_format($PaymentData['itemamt']);
         }
         $PayPalRequestData = array(
             'DPFields' => $DPFields,
