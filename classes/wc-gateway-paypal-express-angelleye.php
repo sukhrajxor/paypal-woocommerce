@@ -2204,7 +2204,7 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
             } catch (Exception $ex) {
                 
             }
-        }
+        } 
     }
     
     public function init_settings() {
