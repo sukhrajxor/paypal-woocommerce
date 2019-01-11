@@ -599,35 +599,21 @@ class Angelleye_PayPal_WC
 	 */
 	function CURLRequest($Request = "", $APIName = "", $APIOperation = "")
 	{
-		$curl = curl_init();
-				// curl_setopt($curl, CURLOPT_HEADER,TRUE);
-				curl_setopt($curl, CURLOPT_VERBOSE, 1);
-				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-				curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-				curl_setopt($curl, CURLOPT_URL, $this->EndPointURL);
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
-                if( isset($this->Force_tls_one_point_two) && $this->Force_tls_one_point_two == 'yes') {
-                    curl_setopt($curl, CURLOPT_SSLVERSION, 6);
-                }
-				
-		if($this->APIMode == 'Certificate')
-		{
-			curl_setopt($curl, CURLOPT_SSLCERT, $this->PathToCertKeyPEM);
-		}
 		
-                $Response = curl_exec($curl);
-                $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-                if ($Response === false || $httpCode != 200) {
-                    $curl_error = curl_error($curl);
-                    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                    $Response = array( 'CURL_ERROR' =>curl_error($curl) );
-                } 
-                
-		curl_close($curl);
-                
-		return $Response;	
+                $args = array(
+                        'method'      => 'POST',
+                        'body'        => $Request,
+                        'user-agent'  => __CLASS__,
+                        'httpversion' => '1.1',
+                        'timeout'     => 90,
+                );
+                $response = wp_safe_remote_post( $this->EndPointURL, $args );
+                if ( is_wp_error( $response ) ) {
+                        $Response = array( 'CURL_ERROR' => $response->get_error_message() );
+                        return $Response;
+		}
+		parse_str( wp_remote_retrieve_body( $response ), $result );
+                return $result; 
 	}
 	
 	/**
@@ -1036,7 +1022,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1074,7 +1060,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1111,7 +1097,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1148,7 +1134,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1200,7 +1186,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1237,7 +1223,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1271,7 +1257,7 @@ class Angelleye_PayPal_WC
 		$NVPRequest = $this->NVPCredentials . $GTDFieldsNVP;
 		$NVPResponse = $this->CURLRequest($NVPRequest);
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		$OrderItems = $this->GetOrderItems($NVPResponseArray);
@@ -1382,7 +1368,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1508,7 +1494,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1591,7 +1577,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		$OrderItems = $this->GetOrderItems($NVPResponseArray);
@@ -1681,7 +1667,7 @@ class Angelleye_PayPal_WC
             $NVPRequest = $this->NVPCredentials . $DECPFieldsNVP . $PaymentsNVP . $UserSelectedOptionsNVP;
             $NVPResponse = $this->CURLRequest($NVPRequest);
             $NVPRequestArray = $this->NVPToArray($NVPRequest);
-            $NVPResponseArray = $this->NVPToArray($NVPResponse);
+            $NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 
             $Errors = $this->GetErrors($NVPResponseArray);
 
@@ -1780,7 +1766,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1884,7 +1870,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -1975,7 +1961,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);	
 		
@@ -2011,7 +1997,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2058,7 +2044,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2093,7 +2079,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2128,7 +2114,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2232,7 +2218,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2267,7 +2253,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2302,7 +2288,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2337,7 +2323,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2402,7 +2388,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2456,7 +2442,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2504,7 +2490,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2533,7 +2519,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2568,7 +2554,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2610,7 +2596,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2645,7 +2631,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2688,7 +2674,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		$Token = isset($NVPResponseArray['TOKEN']) ? $NVPResponseArray['TOKEN'] : '';
@@ -2720,7 +2706,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2750,7 +2736,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2819,7 +2805,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		$Token = isset($NVPResponseArray['TOKEN']) ? $NVPResponseArray['TOKEN'] : '';
@@ -2862,7 +2848,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
@@ -2900,7 +2886,7 @@ class Angelleye_PayPal_WC
                     return $NVPResponse;
                 }
 		$NVPRequestArray = $this->NVPToArray($NVPRequest);
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 		
 		$Errors = $this->GetErrors($NVPResponseArray);
 		
