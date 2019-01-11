@@ -829,9 +829,9 @@ class AngellEYE_Utility {
             $PayPalRequest = isset($PayPalResult['RAWREQUEST']) ? $PayPalResult['RAWREQUEST'] : '';
             $PayPalResponse = isset($PayPalResult['RAWRESPONSE']) ? $PayPalResult['RAWRESPONSE'] : '';
             $this->ec_add_log('Request: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalRequest)), true));
-            $this->ec_add_log('Response: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalResponse)), true));
+            $this->ec_add_log('Response: ' . print_r($PayPalResponse, true));
         } else {
-            $this->ec_add_log('Response: ' . print_r($this->paypal->NVPToArray($PayPalResult['RAWRESPONSE']), true));
+            $this->ec_add_log('Response: ' . print_r($PayPalResult['RAWRESPONSE'], true));
         }
     }
 

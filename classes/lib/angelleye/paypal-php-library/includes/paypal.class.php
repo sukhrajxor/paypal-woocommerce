@@ -591,7 +591,6 @@ class Angelleye_PayPal_WC
 	}
 	
 	/**
-	 * Send the API request to PayPal using CURL
 	 *
 	 * @access	public
 	 * @param	string	NVP string
@@ -599,7 +598,6 @@ class Angelleye_PayPal_WC
 	 */
 	function CURLRequest($Request = "", $APIName = "", $APIOperation = "")
 	{
-		
                 $args = array(
                         'method'      => 'POST',
                         'body'        => $Request,
