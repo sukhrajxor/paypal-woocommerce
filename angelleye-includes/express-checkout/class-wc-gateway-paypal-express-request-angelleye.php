@@ -1065,7 +1065,7 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
         $PayPalRequest = isset($this->paypal_response['RAWREQUEST']) ? $this->paypal_response['RAWREQUEST'] : '';
         $PayPalResponse = isset($this->paypal_response['RAWRESPONSE']) ? $this->paypal_response['RAWRESPONSE'] : '';
         WC_Gateway_PayPal_Express_AngellEYE::log($paypal_action_name . ' Request: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalRequest)), true));
-        WC_Gateway_PayPal_Express_AngellEYE::log($paypal_action_name . ' Response: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalResponse)), true));
+        WC_Gateway_PayPal_Express_AngellEYE::log($paypal_action_name . ' Response: ' . print_r($PayPalResponse, true));
     }
 
     public function angelleye_ec_load_customer_data_using_ec_details() {
@@ -1354,7 +1354,7 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
         $PayPalRequest = isset($this->paypal_response['RAWREQUEST']) ? $this->paypal_response['RAWREQUEST'] : '';
         $PayPalResponse = isset($this->paypal_response['RAWRESPONSE']) ? $this->paypal_response['RAWRESPONSE'] : '';
         WC_Gateway_PayPal_Express_AngellEYE::log('Request: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalRequest)), true));
-        WC_Gateway_PayPal_Express_AngellEYE::log('Response: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalResponse)), true));
+        WC_Gateway_PayPal_Express_AngellEYE::log('Response: ' . print_r($PayPalResponse, true));
         return $this->paypal_response;
     }
 
@@ -1450,7 +1450,7 @@ class WC_Gateway_PayPal_Express_Request_AngellEYE {
         $PayPalRequest = isset($this->paypal_response['RAWREQUEST']) ? $this->paypal_response['RAWREQUEST'] : '';
         $PayPalResponse = isset($this->paypal_response['RAWRESPONSE']) ? $this->paypal_response['RAWRESPONSE'] : '';
         WC_Gateway_PayPal_Express_AngellEYE::log('Request: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalRequest)), true));
-        WC_Gateway_PayPal_Express_AngellEYE::log('Response: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalResponse)), true));
+        WC_Gateway_PayPal_Express_AngellEYE::log('Response: ' . print_r($PayPalResponse, true));
         if ($this->paypal->APICallSuccessful($this->paypal_response['ACK'])) {
             $order->add_order_note('Refund Transaction ID:' . $this->paypal_response['REFUNDTRANSACTIONID']);
             update_post_meta($order_id, 'Refund Transaction ID', $this->paypal_response['REFUNDTRANSACTIONID']);

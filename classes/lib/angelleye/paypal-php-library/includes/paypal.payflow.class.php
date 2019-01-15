@@ -94,54 +94,22 @@ class Angelleye_PayPal_PayFlow extends Angelleye_PayPal_WC
 	{
 	
 		$unique_id = date('YmdGis').rand(1000,9999);
-	
-		$headers[] = "Content-Type: text/namevalue"; //or text/xml if using XMLPay.
-		$headers[] = "Content-Length : " . strlen ($Request);  // Length of data to be passed
-		$headers[] = "X-VPS-Timeout: 45";
-		$headers[] = "X-VPS-Request-ID:" . $unique_id;
-	
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_HEADER, 1);
-		curl_setopt($curl, CURLOPT_VERBOSE, 1);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 90);
-		curl_setopt($curl, CURLOPT_URL, $this->APIEndPoint);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_POST, 1);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
-                if( isset($this->Force_tls_one_point_two) && $this->Force_tls_one_point_two == 'yes') {
-                    curl_setopt($curl, CURLOPT_SSLVERSION, 6);
+                $args = array(
+                        'method'      => 'POST',
+                        'body'        => $Request,
+                        'user-agent'  => __CLASS__,
+                        'httpversion' => '1.1',
+                        'headers'   => array('Content-Type' => 'text/namevalue', 'Content-Length' => strlen ($Request), 'X-VPS-Timeout: 45' => '45', 'X-VPS-Request-ID' => $unique_id),
+                        'timeout'     => 90,
+                );
+                $response = wp_safe_remote_post( $this->APIEndPoint, $args );
+                if ( is_wp_error( $response ) ) {
+                        $Response = array( 'CURL_ERROR' => $response->get_error_message() );
+                        return $Response;
+		} else {
+                    parse_str( wp_remote_retrieve_body( $response ), $result );
+                    return $result;
                 }
-	
-		// Try to submit the transaction up to 3 times with 5 second delay.  This can be used
-		// in case of network issues.  The idea here is since you are posting via HTTPS there
-		// could be general network issues, so try a few times before you tell customer there
-		// is an issue.
-                
-                $Response = curl_exec($curl);
-                if($Response === false) {
-                    return array( 'CURL_ERROR' =>curl_error($curl) );
-                } else {
-                    $i=1;
-                    while ($i++ <= 3) {
-                        if($i != 2) {
-                            $Response = curl_exec($curl);
-                        }
-                        $headers = curl_getinfo($curl);
-                        if ($headers['http_code'] != 200) {
-                            sleep(5);  // Let's wait 5 seconds to see if its a temporary network issue.
-                        } else if ($headers['http_code'] == 200) {
-                            // we got a good response, drop out of loop.
-                            break;
-                        }
-                    }
-                }
-                curl_close($curl);
-		return $Response;
 	}
 	
 	
@@ -190,8 +158,8 @@ class Angelleye_PayPal_PayFlow extends Angelleye_PayPal_WC
                 if( isset( $NVPResponse ) && is_array( $NVPResponse ) && !empty( $NVPResponse['CURL_ERROR'] ) ){
                     return $NVPResponse;
                 }
-		$NVPResponse = strstr($NVPResponse,"RESULT");
-		$NVPResponseArray = $this->NVPToArray($NVPResponse);
+		//$NVPResponse = strstr($NVPResponse,"RESULT");
+		$NVPResponseArray = $NVPResponse; //$this->NVPToArray($NVPResponse);
 
 		$NVPResponseArray['RAWREQUEST'] = $NVPRequestmask;
 		$NVPResponseArray['RAWRESPONSE'] = $NVPResponse;

@@ -136,23 +136,21 @@ class Angelleye_PayPal_Adaptive extends Angelleye_PayPal_WC
 	 */
 	function CURLRequest($Request = "", $APIName = "", $APIOperation = "")
 	{
-		$curl = curl_init();
-				curl_setopt($curl, CURLOPT_VERBOSE, 1);
-				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-				curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-				curl_setopt($curl, CURLOPT_URL, $this -> EndPointURL . $APIName . '/' . $APIOperation);
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $this -> BuildHeaders(false));
-								
-		if($this -> APIMode == 'Certificate')
-		{
-			curl_setopt($curl, CURLOPT_SSLCERT, $this -> PathToCertKeyPEM);
+                $args = array(
+                        'method'      => 'POST',
+                        'body'        => $Request,
+                        'user-agent'  => __CLASS__,
+                        'httpversion' => '1.1',
+                        'timeout'     => 90,
+                );
+                $response = wp_safe_remote_post( $this -> EndPointURL . $APIName . '/' . $APIOperation, $args );
+                if ( is_wp_error( $response ) ) {
+                        $Response = array( 'CURL_ERROR' => $response->get_error_message() );
+                        return $Response;
 		}
-		
-		$Response = curl_exec($curl);		
-		curl_close($curl);
-		return $Response;
+		parse_str( wp_remote_retrieve_body( $response ), $result );
+                return $result; 
+                
 	}
 	
 	/**
