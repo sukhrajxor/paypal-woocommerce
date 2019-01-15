@@ -1917,12 +1917,12 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
                     $website_url = str_ireplace('www.', '', parse_url($website_url, PHP_URL_HOST));
                     $post = '{"owner_id":"woocommerce_container","owner_type":"PAYPAL","application_context":{"terms_accepted":true,"bn_code":"AngellEYE_SP_WooCommerce_MS","partner_name":"' . $website_name . '"},"name":"woocommerce_container","description":"Container created from PayPal for WooCommerce plugin","url":"' . $website_url . '","published":true,"tags":[{"tag_definition_id":"credit","enabled":true,"configuration":[{"id":"analytics-id","value":"' . wc_clean($_POST['woocommerce_paypal_express_api_username']) . '-1"},{"id":"variant","value":"slide-up"},{"id":"flow","value":"credit"},{"id":"mobile-flow","value":"credit"},{"id":"is-mobile-enabled","value":"true"},{"id":"is-desktop-enabled","value":"true"},{"id":"limit","value":"3"}]}, {"tag_definition_id": "analytics", "enabled": true, "configuration": [{"id": "analytics-id", "value": "' . wc_clean($_POST['woocommerce_paypal_express_api_username']) . '-1"}]}]}';
                     $headers = array(
-                        'Accept: application/json',
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($post),
-                        "x_nvp_pwd: " . wc_clean($_POST['woocommerce_paypal_express_api_password']),
-                        "x_nvp_signature: " . wc_clean($_POST['woocommerce_paypal_express_api_signature']),
-                        "x_nvp_user: " . wc_clean($_POST['woocommerce_paypal_express_api_username'])
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json',
+                        'Content-Length' => strlen($post),
+                        'x_nvp_pwd' =>  wc_clean($_POST['woocommerce_paypal_express_api_password']),
+                        'x_nvp_signature' => wc_clean($_POST['woocommerce_paypal_express_api_signature']),
+                        'x_nvp_user' =>  wc_clean($_POST['woocommerce_paypal_express_api_username'])
                     );
                     $result_response = $this->angelleye_paypal_marketing_solutions_request($post, $headers);
                     if (!empty($result_response['response'])) {
@@ -1954,20 +1954,25 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
     }
 
     public function angelleye_paypal_marketing_solutions_request($post, $headers) {
-        $result = array();
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_VERBOSE, 1);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-        curl_setopt($curl, CURLOPT_URL, 'https://api.paypal.com/proxy/v1/offers/containers');
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_SSLVERSION, 6);
-        $result['response'] = curl_exec($curl);
-        $result['httpCode'] = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-        return $result;
+        $args = array(
+                'method'      => 'POST',
+                'body'        => $post,
+                'user-agent'  => __CLASS__,
+                'httpversion' => '1.1',
+                'headers'   => $headers,
+                'timeout'     => 90,
+        );
+        $response = wp_safe_remote_post( 'https://api.paypal.com/proxy/v1/offers/containers', $args );
+        if ( is_wp_error( $response ) ) {
+                $Response = array( 'CURL_ERROR' => $response->get_error_message() );
+                return $Response;
+        }
+        parse_str( wp_remote_retrieve_body( $response ), $result );
+
+        $result['response'] = $result;
+        $result['httpCode'] = $result['response']['code'];
+
+        return $result; 
     }
     
     public function init_settings() {
