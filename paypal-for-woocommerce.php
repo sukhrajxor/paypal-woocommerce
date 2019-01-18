@@ -4,7 +4,7 @@
  * Plugin Name:       PayPal for WooCommerce
  * Plugin URI:        http://www.angelleye.com/product/paypal-for-woocommerce-plugin/
  * Description:       Easily enable PayPal Express Checkout, PayPal Pro, PayPal Advanced, PayPal REST, and PayPal Braintree.  Each option is available separately so you can enable them individually.
- * Version:           1.5.4
+ * Version:           1.5.5
  * Author:            Angell EYE
  * Author URI:        http://www.angelleye.com/
  * License:           GNU General Public License v3.0
@@ -39,7 +39,7 @@ if (!defined('PAYPAL_FOR_WOOCOMMERCE_ASSET_URL')) {
     define('PAYPAL_FOR_WOOCOMMERCE_ASSET_URL', plugin_dir_url(__FILE__));
 }
 if (!defined('VERSION_PFW')) {
-    define('VERSION_PFW', '1.5.4');
+    define('VERSION_PFW', '1.5.5');
 }
 if ( ! defined( 'PAYPAL_FOR_WOOCOMMERCE_PLUGIN_FILE' ) ) {
     define( 'PAYPAL_FOR_WOOCOMMERCE_PLUGIN_FILE', __FILE__ );
@@ -285,14 +285,15 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
             $angelleye_send_opt_in_logging_details = get_option('angelleye_send_opt_in_logging_details', '');
             
             if($opt_in_log == 'yes' && empty($angelleye_send_opt_in_logging_details)){
-                echo '<div class="error angelleye-notice" style="display:none;">'
+                echo '<div class="notice notice-success angelleye-notice" style="display:none;">'
                         . '<div class="angelleye-notice-logo-original"><span></span></div>'
                         . '<div class="angelleye-notice-message">'
-                            . sprintf(__('We work directly with PayPal to improve your experience as a seller as well as your buyer\'s experience. May we log some basic details about your site (eg. URL) for future improvement purposes? It would be a big help. Thanks!.','paypal-for-woocommerce'))
-                        . '</div>'
+                            . '<h3>PayPal for WooCoomerce</h3>'
+                            . '<div class="angelleye-notice-message-inner">'.sprintf(__('We work directly with PayPal to improve your experience as a seller as well as your buyer\'s experience. May we log some basic details about your site (eg. URL) for future improvement purposes? It would be a big help, thanks!.','paypal-for-woocommerce'))
+                        . '</div></div>'
                         . '<div class="angelleye-notice-cta">'
-                            . '<a href="'.  add_query_arg('angelleye_display_agree_disgree_opt_in_logging','yes').'" class="button button-primary">'.__('Sure, I\'ll help','paypal-for-woocommerce').'</a>&nbsp;&nbsp;'
-                            .'<a href="'.  add_query_arg('angelleye_display_agree_disgree_opt_in_logging','no').'" class="button">'.__('No thanks','paypal-for-woocommerce').'</a>'
+                            . '<a href="'.  add_query_arg('angelleye_display_agree_disgree_opt_in_logging','yes').'" class="button button-primary">'.__('Sure, I\'ll help!','paypal-for-woocommerce').'</a>&nbsp;&nbsp;'
+                            .'<a href="'.  add_query_arg('angelleye_display_agree_disgree_opt_in_logging','no').'" class="button">'.__('No thanks.','paypal-for-woocommerce').'</a>'
                         . '</div>'
                     . '</div>';
             }
