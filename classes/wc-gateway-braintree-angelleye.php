@@ -1314,7 +1314,7 @@ class WC_Gateway_Braintree_AngellEYE extends WC_Payment_Gateway_CC {
                 } catch (Braintree_Exception_NotFound $e) {
                     $this->add_log("Braintree_Transaction::void Braintree_Exception_NotFound: " . $e->getMessage());
                     return new WP_Error(404, $e->getMessage());
-                } catch (Exception $ex) {
+                } catch (Exception $e) {
                     $this->add_log("Braintree_Transaction::void Exception: " . $e->getMessage());
                     return new WP_Error(404, $e->getMessage());
                 }
@@ -1339,7 +1339,7 @@ class WC_Gateway_Braintree_AngellEYE extends WC_Payment_Gateway_CC {
             } catch (Braintree_Exception_NotFound $e) {
                 $this->add_log("Braintree_Transaction::refund Braintree_Exception_NotFound: " . $e->getMessage());
                 return new WP_Error(404, $e->getMessage());
-            } catch (Exception $ex) {
+            } catch (Exception $e) {
                 $this->add_log("Braintree_Transaction::refund Exception: " . $e->getMessage());
                 return new WP_Error(404, $e->getMessage());
             }
@@ -1780,8 +1780,8 @@ class WC_Gateway_Braintree_AngellEYE extends WC_Payment_Gateway_CC {
             } else {
                 return false;
             }
-        } catch (Exception $ex) {
-            $error = $this->get_braintree_exception_message($ex);
+        } catch (Exception $e) {
+            $error = $this->get_braintree_exception_message($e);
             wc_add_notice($error, 'error');
             if ($zero_amount_payment == false) {
                 wp_redirect(wc_get_account_endpoint_url('payment-methods'));
