@@ -2269,4 +2269,9 @@ class AngellEYE_Utility {
                     . '</div>'
                 . '</div>';
         }
+        
+        public static function angelleye_display_marketing_sidebar($id = null) {
+            wp_enqueue_style('angelleye_marketing_css');
+            require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/template/sidebar.php' );
+        }
 }
