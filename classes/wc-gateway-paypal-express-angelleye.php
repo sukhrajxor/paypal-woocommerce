@@ -461,15 +461,31 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
                     
                 }
         }).change();
-        jQuery('#woocommerce_paypal_express_checkout_page_enable_smart_button').change(function () {
-            checkout_smart_button_options = jQuery('#woocommerce_paypal_express_checkout_page_configure_settings, #woocommerce_paypal_express_checkout_page_button_layout, #woocommerce_paypal_express_checkout_page_button_size, #woocommerce_paypal_express_checkout_page_disallowed_funding_methods').closest('tr');
-            if (jQuery(this).is(':checked')) {
-                checkout_smart_button_options.show();
+        jQuery('#woocommerce_paypal_express_show_on_checkout').change(function () {
+            var paypal_express_show_on_checkout = jQuery(this).find('option:selected').val();
+            if( paypal_express_show_on_checkout === 'no') {
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').hide();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').hide();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').next('table').hide();
+            } else if( paypal_express_show_on_checkout === 'top' ) {
+                jQuery('#woocommerce_paypal_express_checkout_page_disable_smart_button').closest('tr').hide();
+            } else if( paypal_express_show_on_checkout === 'regular' ) {
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').next('table').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_disable_smart_button').closest('tr').show();
+            } else if( paypal_express_show_on_checkout === 'both' ) {
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').next('table').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_disable_smart_button').closest('tr').show();
             } else {
-                checkout_smart_button_options.hide();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_button_settings').next('p').next('table').show();
+                jQuery('#woocommerce_paypal_express_checkout_page_disable_smart_button').closest('tr').show();
             }
         }).change();
-        
         </script>
          <?php
     }
@@ -1335,14 +1351,6 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
                 'description'  => __( 'Enable the Checkout Page specific button settings, and the options set will be applied to the PayPal buttons on your Checkout page.', 'paypal-for-woocommerce' ),
                 'type' => 'title'
             ),
-            'checkout_page_enable_smart_button' => array(
-                'title' => __('Enable/Disable', 'paypal-for-woocommerce'),
-                'type' => 'checkbox',
-                'label' => __( 'Enable Smart Buttons to the Checkout page.', 'paypal-for-woocommerce' ),
-                'default'     => 'yes',
-                'desc_tip'    => true,
-                'description' => __( '', 'paypal-for-woocommerce' ),
-            ),
             'checkout_page_configure_settings' => array(
                 'title' => __('Enable', 'paypal-for-woocommerce'),
                 'type' => 'checkbox',
@@ -1350,6 +1358,14 @@ class WC_Gateway_PayPal_Express_AngellEYE extends WC_Payment_Gateway {
                 'default'     => 'no',
                 'desc_tip'    => true,
                 'description' => __( 'Optionally override global button settings above and configure buttons specific to the Checkout page.', 'paypal-for-woocommerce' ),
+            ),
+            'checkout_page_disable_smart_button' => array(
+                'title' => __('Enable/Disable', 'paypal-for-woocommerce'),
+                'type' => 'checkbox',
+                'label' => __( 'Disable smart buttons in the regular list of payment gateways.', 'paypal-for-woocommerce' ),
+                'default'     => 'no',
+                'desc_tip'    => true,
+                'description' => __( '', 'paypal-for-woocommerce' ),
             ),
             'checkout_page_button_layout' => array(
                 'title' => __('Button Layout', 'paypal-for-woocommerce'),
