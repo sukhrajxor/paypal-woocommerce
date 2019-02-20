@@ -2225,11 +2225,16 @@ class AngellEYE_Utility {
                 update_post_meta($order_id, $key, wc_clean($value));
             }
         }
-        
 
         public static function is_subs_change_payment() {
 		return ( isset( $_GET['pay_for_order'] ) && isset( $_GET['change_payment_method'] ) );
 	}
+
+
+        public static function angelleye_display_marketing_sidebar($id = null) {
+            wp_enqueue_style('angelleye_marketing_css');
+            require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/template/sidebar.php' );
+        }
 
         public static function angelleye_get_push_notifications() {
             $args = array(
@@ -2273,10 +2278,6 @@ class AngellEYE_Utility {
                     . '<button class="angelleye-notice-dismiss angelleye-dismiss-welcome" data-msg="'.$response_data->id.'">Dismiss</button>'
                     . '</div>'
                 . '</div>';
-        }
-       
-        public static function angelleye_display_marketing_sidebar($id = null) {
-            wp_enqueue_style('angelleye_marketing_css');
-            require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/template/sidebar.php' );
+
         }
 }

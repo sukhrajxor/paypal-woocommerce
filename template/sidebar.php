@@ -5,7 +5,6 @@
             printf(esc_html__('%1$s recommendations for you', 'paypal-for-woocommerce'), 'Angell EYE');
             ?>
         </div>
-        <?php if(!get_user_meta(get_current_user_id(), 'enable_mailchimp_subscription')) { ?>
         <div class="angelleye-sidebar__section m10">
             <h2>
                 <?php
@@ -33,7 +32,6 @@
                         .done(function (response) {
                             response_parsed = JSON.parse(response);
                             if( response_parsed.result === "success" ) {
-                                $('.angelleye-wizard-text-input').hide();
                                 $('#angelleye_mailchimp_msg').html(response_parsed.msg);
                             } else {
                                 $('#angelleye_mailchimp_msg').html(response_parsed.msg);
@@ -44,7 +42,6 @@
                         });
             });
         </script>
-        <?php } ?>
         <div class="angelleye-sidebar__section m10">
             <h2><?php esc_html_e('Extend PayPal for WooCommerce', 'paypal-for-woocommerce'); ?></h2>
             <div class="wp-clearfix m10">
