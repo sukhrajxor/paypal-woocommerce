@@ -50,10 +50,12 @@ if ( ! defined( 'PAYPAL_FOR_WOOCOMMERCE_BASENAME' ) ) {
 if (!defined('PAYPAL_FOR_WOOCOMMERCE_DIR_PATH')) {
     define('PAYPAL_FOR_WOOCOMMERCE_DIR_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ));
 }
+if (!defined('PAYPAL_FOR_WOOCOMMERCE_ISU_URL')) {
+    define('PAYPAL_FOR_WOOCOMMERCE_ISU_URL', 'https://www.angelleye.com/web-services/ifthengive/paypal-isu/');
+}
 if (!defined('PAYPAL_FOR_WOOCOMMERCE_PUSH_NOTIFICATION_WEB_URL')) {
     define('PAYPAL_FOR_WOOCOMMERCE_PUSH_NOTIFICATION_WEB_URL', 'https://www.angelleye.com/');
 }
-
 
 /**
  * Set global parameters
@@ -266,6 +268,16 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
             if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) && !get_user_meta($user_id, 'ignore_pp_woo') && !is_plugin_active_for_network( 'woocommerce/woocommerce.php' )) {
                 echo '<div class="error angelleye-notice" style="display:none;"><div class="angelleye-notice-logo"><span></span></div><div class="angelleye-notice-message">' . sprintf( __("WooCommerce PayPal Payments requires WooCommerce plugin to work normally. Please activate it or install it from <a href='http://wordpress.org/plugins/woocommerce/' target='_blank'>here</a>.", 'paypal-for-woocommerce') ) . '</div><div class="angelleye-notice-cta"><button class="angelleye-notice-dismiss angelleye-dismiss-welcome" data-msg="ignore_pp_woo">Dismiss</button></div></div>';
             }
+            $express_connect_success_notice = get_option('angelleye_paypal_for_woo_express_connect_success_notice', 'no');
+            if($express_connect_success_notice != 'no' && !empty($express_connect_success_notice)){
+                echo '<div class="notice notice-success angelleye-notice" style="display:none;"><div class="angelleye-notice-logo"><span></span></div><div class="angelleye-notice-message">' . $express_connect_success_notice . '</div><div class="angelleye-notice-cta"><button class="angelleye-notice-dismiss angelleye-dismiss-welcome">Dismiss</button></div></div>';
+                delete_option('angelleye_paypal_for_woo_express_connect_success_notice');
+            }
+            $express_connect_failed_notice = get_option('angelleye_paypal_for_woo_express_connect_failed_notice', 'no');
+            if($express_connect_failed_notice != 'no' && !empty($express_connect_failed_notice)){
+                echo '<div class="error angelleye-notice" style="display:none;"><div class="angelleye-notice-logo"><span></span></div><div class="angelleye-notice-message">' . $express_connect_success_notice . '</div><div class="angelleye-notice-cta"><button class="angelleye-notice-dismiss angelleye-dismiss-welcome">Dismiss</button></div></div>';
+                delete_option('angelleye_paypal_for_woo_express_connect_failed_notice');
+            }
             
             $screen = get_current_screen();
             
@@ -379,7 +391,7 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
             );
             wp_localize_script( 'angelleye_admin', 'angelleye_admin', $translation_array );
             if( !empty($_GET['tab']) && !empty($_GET['section']) && $_GET['tab'] == 'checkout' && $_GET['section'] == 'paypal_express') {
-                wp_enqueue_script('angelleye-in-context-checkout-js-admin', 'https://www.paypalobjects.com/api/checkout.min.js', array(), null, true);
+                wp_register_script('angelleye-in-context-checkout-js-admin', 'https://www.paypalobjects.com/api/checkout.min.js', array(), null, true);
             }
             wp_enqueue_script( 'angelleye_admin');
         }
@@ -980,6 +992,8 @@ if(!class_exists('AngellEYE_Gateway_Paypal')){
                 }
                 
             }
+            
+            
         }
         
         
