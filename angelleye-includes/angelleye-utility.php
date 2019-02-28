@@ -2230,7 +2230,6 @@ class AngellEYE_Utility {
 		return ( isset( $_GET['pay_for_order'] ) && isset( $_GET['change_payment_method'] ) );
 	}
 
-
         public static function angelleye_display_marketing_sidebar($id = null) {
             wp_enqueue_style('angelleye_marketing_css');
             require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/template/sidebar.php' );
