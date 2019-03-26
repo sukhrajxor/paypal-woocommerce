@@ -132,11 +132,13 @@ Automatic updates should work great for you.  As always, though, we recommend ba
 * Feature - Adds push notification system and settings sidebar. ([PFW-343](https://github.com/angelleye/paypal-woocommerce/pull/1279)) ([PFWA-3](https://github.com/angelleye/paypal-woocommerce/pull/1285))
 * Feature - Adds ability to disable PayPal Smart Buttons in the Woo Checkout page gateway list. ([PFW-359](https://github.com/angelleye/paypal-woocommerce/pull/1277))
 * Feature - Woo Side Cart compatibility. ([PFWA-160](https://github.com/angelleye/paypal-woocommerce/pull/1293))
+* Tweak - Adjusts the way order properties are accessed. ([PFWA-164](https://github.com/angelleye/paypal-woocommerce/pull/1300))
 * Tweak - Adds feedback request when deactivating the plugin. ([PFWA-2](https://github.com/angelleye/paypal-woocommerce/pull/1291))
 * Tweak - Updates plugin action links. ([PFWA-161](https://github.com/angelleye/paypal-woocommerce/pull/1295)) ([PFWA-18](https://github.com/angelleye/paypal-woocommerce/pull/1296))
 * Fix - Resolves an issue with Braintree token payments. ([PFW-357](https://github.com/angelleye/paypal-woocommerce/pull/1280)) ([PFW-372](https://github.com/angelleye/paypal-woocommerce/pull/1284)) ([PFWA-24](https://github.com/angelleye/paypal-woocommerce/pull/1298))
 * Fix - Adjusts credit card number validation logic to resolve rare occurrences of false-negatives. ([PFW-369](https://github.com/angelleye/paypal-woocommerce/pull/1283))
 * Fix - Resolves a compatibility issue with Woo Subscriptions where payments were triggered when payment method was updated by user. ([PFWA-15](https://github.com/angelleye/paypal-woocommerce/pull/1287))
+* Fix - Resolves an issue where the PayPal Smart Buttons would show up on the Woo checkout page during $0.00 free orders. ([PFWA-165](https://github.com/angelleye/paypal-woocommerce/pull/1301))
 
 = 1.5.7 - 01.20.2019 =
 * Fix - Adjustments to coincide with recent Woo changes and resolve PayPal button performance issues. ([PFW-356](https://github.com/angelleye/paypal-woocommerce/pull/1274))
