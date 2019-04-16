@@ -1,4 +1,4 @@
-jQuery(function () {
+jQuery(unction () {
     var angelleye_paypal_marketing_table_width = jQuery('#angelleye_paypal_marketing_table').parents('div').width();
     jQuery('#angelleye_paypal_marketing_table').css("width", angelleye_paypal_marketing_table_width + "px");
     jQuery('body').bind('mousewheel DOMMouseScroll', function(e){
